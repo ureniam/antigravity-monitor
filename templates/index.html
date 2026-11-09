@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google Antigravity · Live Quota & Credit Monitor</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #090d16;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.1) 0px, transparent 50%),
+        radial-gradient(at 50% 50%, rgba(15, 23, 42, 0.5) 0px, transparent 100%);
+    }
+    .glass-card {
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glow-cyan {
+      box-shadow: 0 0 35px -5px rgba(6, 182, 212, 0.25);
+    }
+    .glow-purple {
+      box-shadow: 0 0 35px -5px rgba(168, 85, 247, 0.25);
+    }
+    .circular-chart {
+      transform: rotate(-90deg);
+    }
+    .circle-bg {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.06);
+      stroke-width: 3.2;
+    }
+    .circle {
+      fill: none;
+      stroke-width: 3.2;
+      stroke-linecap: round;
+      transition: stroke-dasharray 1s ease-in-out, stroke 0.5s ease;
+    }
+  </style>
+</head>
+<body class="text-slate-100 min-h-screen font-sans flex flex-col antialiased selection:bg-indigo-500 selection:text-white">
+
+  <!-- Top Navigation -->
+  <header class="border-b border-slate-800/80 bg-slate-950/60 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 font-bold text-lg text-white">
+          AG
+        </div>
+        <div>
+          <h1 class="text-base font-bold bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent leading-none">
+            Google Antigravity
+          </h1>
+          <p class="text-xs text-slate-400 font-mono mt-0.5">Live Quota & Model Credit Intelligence</p>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center space-x-3">
+        <div class="flex items-center space-x-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono font-medium">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span id="liveStatusText">LIVE MONITORING</span>
+        </div>
+
+        <button id="refreshBtn" onclick="syncQuota(true)" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition-all text-white text-xs font-semibold shadow-lg shadow-indigo-600/20 active:scale-95">
+          <svg id="refreshIcon" class="w-3.5 h-3.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+          </svg>
+          <span>Sync Now</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-8">
+
+    <!-- KPI Summary Row -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <div class="glass-card rounded-2xl p-5 border border-slate-800">
+        <div class="text-xs font-mono uppercase tracking-wider text-slate-400 mb-1">Total Active Models</div>
+        <div class="text-3xl font-extrabold text-white font-mono flex items-baseline justify-between">
+          <span>14 Models</span>
+          <span class="text-xs font-sans text-cyan-400 font-normal px-2.5 py-0.5 rounded-md bg-cyan-500/10 border border-cyan-500/20">All Online</span>
+        </div>
+        <p class="text-xs text-slate-400 mt-2">11 Gemini variants + 2 Claude + 1 GPT-OSS</p>
+      </div>
+
+      <div class="glass-card rounded-2xl p-5 border border-slate-800">
+        <div class="text-xs font-mono uppercase tracking-wider text-slate-400 mb-1">Weekly Pool Quota</div>
+        <div class="text-3xl font-extrabold text-white font-mono flex items-baseline justify-between">
+          <span id="geminiWeeklyTopPercent">--%</span>
+          <span class="text-xs font-sans text-emerald-400 font-normal px-2.5 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20">Healthy</span>
+        </div>
+        <p id="geminiWeeklyTopReset" class="text-xs text-slate-400 mt-2 font-mono">Next reset calculating...</p>
+      </div>
+
+      <div class="glass-card rounded-2xl p-5 border border-slate-800">
+        <div class="text-xs font-mono uppercase tracking-wider text-slate-400 mb-1">Claude / GPT Quota</div>
+        <div class="text-3xl font-extrabold text-white font-mono flex items-baseline justify-between">
+          <span id="claudeWeeklyTopPercent">--%</span>
+          <span class="text-xs font-sans text-purple-400 font-normal px-2.5 py-0.5 rounded-md bg-purple-500/10 border border-purple-500/20">Full Credit</span>
+        </div>
+        <p id="claudeWeeklyTopReset" class="text-xs text-slate-400 mt-2 font-mono">Next reset calculating...</p>
+      </div>
+    </div>
+
+    <!-- Main Families Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+      <!-- ================= GEMINI FAMILY CARD ================= -->
+      <div class="glass-card rounded-3xl p-6 sm:p-8 border border-cyan-500/20 glow-cyan relative overflow-hidden flex flex-col justify-between">
+        <div class="absolute -top-24 -right-24 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div>
+          <!-- Header -->
+          <div class="flex items-center justify-between pb-6 border-b border-slate-800/80">
+            <div class="flex items-center space-x-3">
+              <div class="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-2xl shadow-inner shadow-cyan-500/20">
+                ⚡
+              </div>
+              <div>
+                <h2 class="text-xl font-bold text-white flex items-center space-x-2">
+                  <span>Gemini Models Family</span>
+                </h2>
+                <p class="text-xs text-cyan-400 font-mono">Gemini 3.8 Flash, 3.7 Flash, 3.6 Flash, 3.1 Pro</p>
+              </div>
+            </div>
+            <span class="text-xs font-mono px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">
+              Shared Quota Pool
+            </span>
+          </div>
+
+          <!-- Gauges Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 my-6">
+            <!-- Weekly Limit -->
+            <div class="bg-slate-900/60 rounded-2xl p-5 border border-slate-800/80 flex items-center space-x-4">
+              <div class="relative w-20 h-20 flex-shrink-0">
+                <svg viewBox="0 0 36 36" class="circular-chart w-full h-full">
+                  <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  <path id="geminiWeeklyCircle" class="circle stroke-cyan-400" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center flex-col">
+                  <span id="geminiWeeklyPercent" class="text-base font-bold font-mono text-white">--%</span>
+                </div>
+              </div>
+              <div>
+                <div class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Weekly Limit</div>
+                <div id="geminiWeeklyCountdown" class="text-sm font-bold text-cyan-400 font-mono mt-1">Calculating...</div>
+                <div id="geminiWeeklyResetDate" class="text-[11px] text-slate-500 font-mono mt-0.5">--</div>
+              </div>
+            </div>
+
+            <!-- 5-Hour Rolling Limit -->
+            <div class="bg-slate-900/60 rounded-2xl p-5 border border-slate-800/80 flex items-center space-x-4">
+              <div class="relative w-20 h-20 flex-shrink-0">
+                <svg viewBox="0 0 36 36" class="circular-chart w-full h-full">
+                  <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  <path id="geminiFiveCircle" class="circle stroke-emerald-400" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center flex-col">
+                  <span id="geminiFivePercent" class="text-base font-bold font-mono text-white">--%</span>
+                </div>
+              </div>
+              <div>
+                <div class="text-xs uppercase tracking-wider text-slate-400 font-semibold">5-Hour Rolling</div>
+                <div id="geminiFiveCountdown" class="text-sm font-bold text-emerald-400 font-mono mt-1">Calculating...</div>
+                <div id="geminiFiveResetDate" class="text-[11px] text-slate-500 font-mono mt-0.5">--</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Covered Models Table -->
+          <div class="mt-4">
+            <div class="text-xs font-mono font-semibold text-slate-400 uppercase tracking-wider mb-3 flex items-center justify-between">
+              <span>Covered Models (11 Tiers)</span>
+              <span class="text-[10px] text-cyan-400 font-normal">Shares this quota</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs" id="geminiModelsList">
+              <!-- Injected by JS -->
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-500 font-mono">
+          <span>Engine: Google DeepMind</span>
+          <span>Status: Normal Operation</span>
+        </div>
+      </div>
+
+      <!-- ================= CLAUDE & GPT FAMILY CARD ================= -->
+      <div class="glass-card rounded-3xl p-6 sm:p-8 border border-purple-500/20 glow-purple relative overflow-hidden flex flex-col justify-between">
+        <div class="absolute -top-24 -right-24 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div>
+          <!-- Header -->
+          <div class="flex items-center justify-between pb-6 border-b border-slate-800/80">
+            <div class="flex items-center space-x-3">
+              <div class="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-2xl shadow-inner shadow-purple-500/20">
+                🧠
+              </div>
+              <div>
+                <h2 class="text-xl font-bold text-white flex items-center space-x-2">
+                  <span>Claude & GPT Family</span>
+                </h2>
+                <p class="text-xs text-purple-400 font-mono">Claude Sonnet 4.6, Opus 4.6, GPT-OSS 120B</p>
+              </div>
+            </div>
+            <span class="text-xs font-mono px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 border border-purple-500/20">
+              Shared Quota Pool
+            </span>
+          </div>
+
+          <!-- Gauges Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 my-6">
+            <!-- Weekly Limit -->
+            <div class="bg-slate-900/60 rounded-2xl p-5 border border-slate-800/80 flex items-center space-x-4">
+              <div class="relative w-20 h-20 flex-shrink-0">
+                <svg viewBox="0 0 36 36" class="circular-chart w-full h-full">
+                  <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  <path id="claudeWeeklyCircle" class="circle stroke-purple-400" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center flex-col">
+                  <span id="claudeWeeklyPercent" class="text-base font-bold font-mono text-white">--%</span>
+                </div>
+              </div>
+              <div>
+                <div class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Weekly Limit</div>
+                <div id="claudeWeeklyCountdown" class="text-sm font-bold text-purple-400 font-mono mt-1">Calculating...</div>
+                <div id="claudeWeeklyResetDate" class="text-[11px] text-slate-500 font-mono mt-0.5">--</div>
+              </div>
+            </div>
+
+            <!-- 5-Hour Rolling Limit -->
+            <div class="bg-slate-900/60 rounded-2xl p-5 border border-slate-800/80 flex items-center space-x-4">
+              <div class="relative w-20 h-20 flex-shrink-0">
+                <svg viewBox="0 0 36 36" class="circular-chart w-full h-full">
+                  <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  <path id="claudeFiveCircle" class="circle stroke-indigo-400" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center flex-col">
+                  <span id="claudeFivePercent" class="text-base font-bold font-mono text-white">--%</span>
+                </div>
+              </div>
+              <div>
+                <div class="text-xs uppercase tracking-wider text-slate-400 font-semibold">5-Hour Rolling</div>
+                <div id="claudeFiveCountdown" class="text-sm font-bold text-indigo-400 font-mono mt-1">Calculating...</div>
+                <div id="claudeFiveResetDate" class="text-[11px] text-slate-500 font-mono mt-0.5">--</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Covered Models Table -->
+          <div class="mt-4">
+            <div class="text-xs font-mono font-semibold text-slate-400 uppercase tracking-wider mb-3 flex items-center justify-between">
+              <span>Covered Models (3 Models)</span>
+              <span class="text-[10px] text-purple-400 font-normal">Shares this quota</span>
+            </div>
+            <div class="grid grid-cols-1 gap-2 text-xs" id="claudeModelsList">
+              <!-- Injected by JS -->
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-500 font-mono">
+          <span>Engine: Anthropic & Open Foundation</span>
+          <span>Status: 100% Available</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Terminal Quick Reference Card -->
+    <div class="glass-card rounded-2xl p-6 border border-slate-800">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h3 class="text-sm font-bold text-white flex items-center space-x-2">
+            <span>💻 Terminal Access (CLI)</span>
+          </h3>
+          <p class="text-xs text-slate-400 mt-0.5">
+            You can check this anytime directly inside your Linux shell with the newly installed commands:
+          </p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <code class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 font-mono text-xs text-cyan-300">agy-quota</code>
+          <code class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 font-mono text-xs text-indigo-300">agy-quota --live</code>
+          <code class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 font-mono text-xs text-purple-300">agy models</code>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800/80 py-4 text-center text-xs text-slate-500 font-mono">
+    Google Antigravity CLI · Antigravity Monitor v1.0 · Designed by Sara
+  </footer>
+
+  <!-- Script for Real-Time Live Clock and Fetching -->
+  <script>
+    let globalData = null;
+    let timerInterval = null;
+
+    function getStrokeColor(percent) {
+      if (percent > 65) return '#10b981'; // emerald
+      if (percent > 30) return '#f59e0b'; // amber
+      return '#ef4444'; // red
+    }
+
+    function formatCountdown(targetIso) {
+      if (!targetIso) return '--';
+      const target = new Date(targetIso).getTime();
+      const now = new Date().getTime();
+      const diff = target - now;
+
+      if (diff <= 0) return 'Resetting now';
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      const parts = [];
+      if (days > 0) parts.push(`${days}d`);
+      parts.push(`${String(hours).padStart(2, '0')}h`);
+      parts.push(`${String(minutes).padStart(2, '0')}m`);
+      parts.push(`${String(seconds).padStart(2, '0')}s`);
+
+      return parts.join(' ') + ' left';
+    }
+
+    function updateTimers() {
+      if (!globalData) return;
+
+      const gw = globalData.gemini?.weekly?.reset_iso;
+      const gf = globalData.gemini?.five_hour?.reset_iso;
+      const cw = globalData.claude_gpt?.weekly?.reset_iso;
+      const cf = globalData.claude_gpt?.five_hour?.reset_iso;
+
+      if (gw) document.getElementById('geminiWeeklyCountdown').innerText = formatCountdown(gw);
+      if (gf) document.getElementById('geminiFiveCountdown').innerText = formatCountdown(gf);
+      if (cw) document.getElementById('claudeWeeklyCountdown').innerText = formatCountdown(cw);
+      if (cf) document.getElementById('claudeFiveCountdown').innerText = formatCountdown(cf);
+
+      if (gw) document.getElementById('geminiWeeklyTopReset').innerText = 'Resets: ' + formatCountdown(gw);
+      if (cw) document.getElementById('claudeWeeklyTopReset').innerText = 'Resets: ' + formatCountdown(cw);
+    }
+
+    function renderData(data) {
+      globalData = data;
+
+      // Gemini weekly
+      const gw = data.gemini?.weekly;
+      if (gw) {
+        document.getElementById('geminiWeeklyPercent').innerText = gw.percent + '%';
+        document.getElementById('geminiWeeklyTopPercent').innerText = gw.percent + '%';
+        document.getElementById('geminiWeeklyResetDate').innerText = gw.reset_iso.replace('T', ' ').replace('Z', ' UTC');
+        const circle = document.getElementById('geminiWeeklyCircle');
+        circle.setAttribute('stroke-dasharray', `${gw.percent}, 100`);
+        circle.style.stroke = getStrokeColor(gw.percent);
+      }
+
+      // Gemini 5-hour
+      const gf = data.gemini?.five_hour;
+      if (gf) {
+        document.getElementById('geminiFivePercent').innerText = gf.percent + '%';
+        document.getElementById('geminiFiveResetDate').innerText = gf.reset_iso.replace('T', ' ').replace('Z', ' UTC');
+        const circle = document.getElementById('geminiFiveCircle');
+        circle.setAttribute('stroke-dasharray', `${gf.percent}, 100`);
+        circle.style.stroke = getStrokeColor(gf.percent);
+      }
+
+      // Claude weekly
+      const cw = data.claude_gpt?.weekly;
+      if (cw) {
+        document.getElementById('claudeWeeklyPercent').innerText = cw.percent + '%';
+        document.getElementById('claudeWeeklyTopPercent').innerText = cw.percent + '%';
+        document.getElementById('claudeWeeklyResetDate').innerText = cw.reset_iso.replace('T', ' ').replace('Z', ' UTC');
+        const circle = document.getElementById('claudeWeeklyCircle');
+        circle.setAttribute('stroke-dasharray', `${cw.percent}, 100`);
+        circle.style.stroke = getStrokeColor(cw.percent);
+      }
+
+      // Claude 5-hour
+      const cf = data.claude_gpt?.five_hour;
+      if (cf) {
+        document.getElementById('claudeFivePercent').innerText = cf.percent + '%';
+        document.getElementById('claudeFiveResetDate').innerText = cf.reset_iso.replace('T', ' ').replace('Z', ' UTC');
+        const circle = document.getElementById('claudeFiveCircle');
+        circle.setAttribute('stroke-dasharray', `${cf.percent}, 100`);
+        circle.style.stroke = getStrokeColor(cf.percent);
+      }
+
+      // Models Lists
+      const geminiList = document.getElementById('geminiModelsList');
+      geminiList.innerHTML = '';
+      (data.models?.gemini || []).forEach(m => {
+        const item = document.createElement('div');
+        item.className = 'flex items-center justify-between p-2 rounded-lg bg-slate-900/40 border border-slate-800/60';
+        item.innerHTML = `
+          <div class="truncate mr-2">
+            <span class="font-medium text-slate-200">${m.name}</span>
+          </div>
+          <span class="flex-shrink-0 px-2 py-0.5 rounded text-[10px] font-mono font-medium ${
+            m.badge.includes('High') || m.badge.includes('Pro') ? 'bg-indigo-500/10 text-indigo-300 border border-indigo-500/20' : 'bg-slate-800 text-slate-400'
+          }">${m.badge}</span>
+        `;
+        geminiList.appendChild(item);
+      });
+
+      const claudeList = document.getElementById('claudeModelsList');
+      claudeList.innerHTML = '';
+      (data.models?.claude_gpt || []).forEach(m => {
+        const item = document.createElement('div');
+        item.className = 'flex items-center justify-between p-2 rounded-lg bg-slate-900/40 border border-slate-800/60';
+        item.innerHTML = `
+          <div class="truncate mr-2">
+            <span class="font-medium text-slate-200">${m.name}</span>
+            <span class="text-[11px] text-slate-500 block">${m.type}</span>
+          </div>
+          <span class="flex-shrink-0 px-2.5 py-1 rounded text-[10px] font-mono font-medium bg-purple-500/10 text-purple-300 border border-purple-500/20">${m.badge}</span>
+        `;
+        claudeList.appendChild(item);
+      });
+
+      updateTimers();
+    }
+
+    async function syncQuota(force = false) {
+      const btn = document.getElementById('refreshBtn');
+      const icon = document.getElementById('refreshIcon');
+      icon.classList.add('animate-spin');
+      btn.disabled = true;
+
+      try {
+        const res = await fetch(`/api/quota?force=${force}`);
+        const data = await res.json();
+        renderData(data);
+      } catch (err) {
+        console.error('Failed to sync quota:', err);
+      } finally {
+        icon.classList.remove('animate-spin');
+        btn.disabled = false;
+      }
+    }
+
+    // Init
+    syncQuota(false);
+    timerInterval = setInterval(updateTimers, 1000);
+    // Background polling every 20 seconds
+    setInterval(() => syncQuota(false), 20000);
+  </script>
+</body>
+</html>
